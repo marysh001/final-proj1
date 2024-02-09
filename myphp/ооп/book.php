@@ -1,36 +1,93 @@
 <?php
-class Book{
-    public string $name;
-    public int $pages;
-    public string $color;
+class AbstractBook{
+    protected string $name;
+    protected string $author;
+    protected string $color;
 
-}
-
-function __construct{string $name, int $pages, string $color} {
-    $this->name - $name;
-    $this->pages - $pages
-    $this->color - $color
-}
-
-function findBook(): string{
-    return "найдена книга {$this->name} количество страниц: {$this->pages}, цвета:{$this->color}. \r\n";
-}
-
-$books = [
-new Book("Три Мушкетера", 672, "красный")
-new Book("Война и мир", 456, "голубой")
-];
-
-foreach($bookss as $book) {
-    echo $book->findBook();
-}
-
-Class Shelf extends Book{
+    protected int $quantity
     
-    public function __construct(int $shelf, array $books[]) {
-        parent::__construct($shelf, ['name']);
-        
-    }
-public function findShelf()
+    abstract function recycleBook(): void;
+
+    abstract function addBook(): void;
+
+    abstract function getBook(): AbstractBook;
+
+    abstract function returnBook(AbstractBook $book): void;
+
 }
+
+$book = new Book();
+$book->getBook()->returnBook($book);
+
+
+class Book extends AbstractBook
+{
+
+    protected int $pageCount;
+
+    public function getBook(): Book
+    {
+
+        return $this;
+
+    }
+
+    public function returnBook(AbstractBook $book): void
+    {
+
+
+    }
+
+    public function recycleBook(): void
+    {
+
+
+    }
+
+    public function addBook(): void
+    {
+
+
+    }
+
+}
+
+class DigitalBook extends AbstractBook
+{
+
+    private string $bookURL;
+
+    public function getBook(): DigitalBook
+    {
+
+
+        $this->getURL();
+
+        return $this;
+
+    }
+
+    public function returnBook(AbstractBook $book): void
+    {
+
+    }
+
+    public function getURL(): string
+    {
+
+        return $this->bookURL;
+
+    }
+
+    public function recycleBook(): void
+    {
+
+    }
+
+    public function addBook(): void
+    {
+
+
+    }
+
 }

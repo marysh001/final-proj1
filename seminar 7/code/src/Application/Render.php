@@ -1,6 +1,6 @@
 <?php
 
-namespace Geekbrains\Application1;
+namespace Geekbrains\Application1\Application;
 
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;

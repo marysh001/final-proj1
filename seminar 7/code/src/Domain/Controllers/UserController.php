@@ -10,7 +10,7 @@ use Geekbrains\Application1\Application\Auth;
 class UserController extends AbstractController {
 
     protected array $actionsPermissions = [
-        'actionHash' => ['admin'],
+        'actionHash' => ['admin', 'some'],
         'actionSave' => ['admin'],
         'actionEdit' => ['admin'],
         'actionIndex' => ['admin'],
@@ -36,8 +36,27 @@ class UserController extends AbstractController {
                 [
                     'title' => 'Список пользователей в хранилище',
                     'users' => $users
+                    'isAdmin' => User::isAdmin($_SESSION['id_user']?? null)
                 ]);
         }
+    }
+
+    public function actionIndexRefresh(){
+        $limit = null;
+        
+        if(isset($_POST['maxId']) && ($_POST['maxId'] > 0)){
+            $limit = $_POST['maxId'];
+        }
+
+        $users = User::getAllUsersFromStorage($limit);
+        $usersData = [];
+        if(count($users) > 0) {
+            foreach($users as $user){
+                $usersData[] = $user->getUserDataAsArray();
+            }
+        }
+
+        return json_encode($usersData);
     }
 
     public function actionSave(): string {
@@ -59,6 +78,25 @@ class UserController extends AbstractController {
             throw new \Exception("Переданные данные некорректны");
         }
     }
+    
+    public static function isAdmin(?int $idUser):bool {
+        if($idUser > 0){
+            $sql = "SELECT role FROM user_roles WHERE role = 'admin' AND id_user =:id_user"
+
+$handler = Application:: $storage->get()->prepare($sql);
+$handler->execute([
+    'id_user' => $idUser
+]);
+$result = $handler->fetchAll();
+
+if (count($result)> 0){
+    return true;
+}
+else {
+    return false;
+}
+        }
+    }
 
     public function actionEdit(): string {
         $render = new Render();
@@ -75,7 +113,7 @@ class UserController extends AbstractController {
                 [
                     'title' => 'Форма создания пользователя'
                     'user_data'=> $userData ?? [],
-                    'action' => $action
+                    'action' => $action,
                 ]);
     }
 
@@ -108,15 +146,7 @@ class UserController extends AbstractController {
             ]);
     }
 
-    public function actionAuth(): string {
-        $render = new Render();
-        
-        return $render->renderPageWithForm(
-                'user-auth.tpl', 
-                [
-                    'title' => 'Форма логина'
-                ]);
-    }
+
 
     public function actionHash(): string {
         return Auth::getPasswordHash($_GET['pass_string']);
@@ -135,7 +165,16 @@ class UserController extends AbstractController {
             }
         }
 
-        
+        public function actionAuth(): string {
+            $render = new Render();
+            
+            return $render->renderPageWithForm(
+                    'user-auth.tpl', 
+                    [
+                        'title' => 'Форма логина'
+                        'auth_success' => 1
+                    ]);
+        }
         if(!$result){
             $render = new Render();
 
@@ -153,6 +192,17 @@ class UserController extends AbstractController {
         }
     }
 
+    public function actionDelete(): string{
+        if(User:: exists($GET['user_id'])){
+            User::deleteFromStorage($_GET['user_id']);
+            header('Location: /user');
+            die();
+        }
+        else{
+            throw new \Exeption("Пользователь не существует");
+        }
+    }
+
     public function actionBirthday(): string {
         $result = false;
 
@@ -167,6 +217,13 @@ class UserController extends AbstractController {
         }
         if(!$result){
             $render = new Render();
+            return $render->renderPageWithForm(
+                'user-auth.tpl', 
+                [
+                    'title' => 'Форма даты рождения'
+                    'auth_success' => 1
+                ]);
+    }
 
             return $render->renderPageWithForm(
                 'user-form.tpl', 

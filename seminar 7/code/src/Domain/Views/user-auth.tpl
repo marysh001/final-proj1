@@ -10,9 +10,9 @@
     <input id="user-login" type="text" name="login">
   </p>
   <p>
-    <label for="user-password">Пароль:</label>
-    <input id="user-password" type="password" name="password">
-
+    <label for="user-birthday">Дата рождения:</label>
+    <input id="user-birthday" type="birthday" name="birthday">
   </p>
+
   <p><input type="submit" value="Войти"></p>
 </form>

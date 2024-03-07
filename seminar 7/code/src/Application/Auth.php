@@ -17,6 +17,7 @@ class Auth {
                 $_SESSION['auth']['user_name'] = $userData['user_name'];
                 $_SESSION['auth']['user_lastname'] = $userData['user_lastname'];
                 $_SESSION['auth']['id_user'] = $userData['id_user'];
+                $_SESSION['auth']['user_birthday'] = $userData['user_birthday'];
             }
         }
     }
